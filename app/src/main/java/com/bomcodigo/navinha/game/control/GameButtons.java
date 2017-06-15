@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.bomcodigo.navinha.game.Assets;
 import com.bomcodigo.navinha.game.interfaces.ButtonDelegate;
+import com.bomcodigo.navinha.game.scenes.GameScene;
 
 import org.cocos2d.layers.CCLayer;
 import org.cocos2d.types.CGPoint;
@@ -18,6 +19,7 @@ public class GameButtons extends CCLayer
     private Button leftControl;
     private Button rightControl;
     private Button shootButton;
+    private GameScene delegate;
 
     public static GameButtons gameButtons(){
         return new GameButtons();
@@ -46,16 +48,23 @@ public class GameButtons extends CCLayer
         shootButton.setPosition(screenResolution(CGPoint.ccp(screenWidth()-40,40)));
     }
 
+    public void setDelegate(GameScene delegate) {
+        this.delegate = delegate;
+    }
+
     @Override
     public void buttonClicked(Button sender) {
         if (sender.equals(this.leftControl)){
             Log.d(TAG,"Button clicked: left");
+            this.delegate.moveLeft();
         }
         if (sender.equals(this.rightControl)){
             Log.d(TAG,"Button clicked: right");
+            this.delegate.moveRight();
         }
         if (sender.equals(this.shootButton)){
             Log.d(TAG,"Button clicked: Shotting!");
+            this.delegate.shoot();
         }
     }
 }
