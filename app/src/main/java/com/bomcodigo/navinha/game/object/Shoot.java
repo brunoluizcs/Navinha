@@ -26,8 +26,8 @@ public class Shoot extends CCSprite {
     private ShootEngineDelegate delegate;
     float positionX, positionY;
 
-    public Shoot(float positionX, float positionY){
-        super(Assets.SHOOT);
+    public Shoot(float positionX, float positionY, String asset){
+        super(asset);
         this.positionX = positionX;
         this.positionY = positionY;
         setPosition(positionX,positionY);

@@ -1,6 +1,7 @@
 package com.bomcodigo.navinha.game.object;
 
 
+import android.content.IntentFilter;
 import android.util.Log;
 
 import com.bomcodigo.navinha.R;
@@ -18,6 +19,8 @@ import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCSprite;
 import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.types.CGPoint;
+
+import java.util.Random;
 
 import static com.bomcodigo.navinha.game.DeviceSettings.screenHeight;
 import static com.bomcodigo.navinha.game.DeviceSettings.screenWidth;
@@ -50,7 +53,9 @@ public class Player extends CCSprite
 
     public void shoot(){
         if (Runner.check().isGamePlaying() && ! Runner.check().isGamePaused()) {
-            delegate.createShoot(new Shoot(positionX,positionY));
+            String[] assets = {Assets.SHOOT,Assets.SHOOTGREEN};
+            int rand = new Random().nextInt(2);
+            delegate.createShoot(new Shoot(positionX,positionY+30,assets[rand]));
         }
     }
 
@@ -77,15 +82,23 @@ public class Player extends CCSprite
         if (positionY < screenHeight() - 30){
             float fator = Math.round(currentAccelY) * -1;
             fator = fator >= 6 ? 6 : fator;
-            this.positionY += fator;
+            float y = this.positionY + fator;
+            if (y < screenHeight() - 30 && fator > NOISE){
+                this.positionY = y;
+            }
         }
     }
 
     private void moveBottom() {
-        if (positionY > 100){
+        if (positionY >= 100) {
             float fator = Math.round(currentAccelY);
             fator = fator >= 6 ? 6 : fator;
-            this.positionY -= fator;
+            float y = this.positionY - fator;
+            if (y > 100) {
+                this.positionY = y;
+            } else {
+                this.positionY = 100;
+            }
         }
     }
 
@@ -118,7 +131,7 @@ public class Player extends CCSprite
                 moveLeft();
             }
 
-            if (this.currentAccelY<2.5f){
+            if (this.currentAccelY<NOISE){
                 moveTop();
             }
 

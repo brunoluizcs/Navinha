@@ -67,6 +67,7 @@ public class Accelerometer implements SensorEventListener{
     }
 
     public void catchAccelerometer(){
+        this.calibrated = 0;
         sensorManager = DeviceSettings.getSensorManager();
         sensorManager.registerListener(this,
                 sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
