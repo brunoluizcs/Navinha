@@ -2,15 +2,19 @@ package com.bomcodigo.navinha.game.object;
 
 import android.util.Log;
 
+import com.bomcodigo.navinha.R;
 import com.bomcodigo.navinha.game.Assets;
 import com.bomcodigo.navinha.game.interfaces.ShootEngineDelegate;
+import com.bomcodigo.navinha.game.screens.Runner;
 
 import org.cocos2d.actions.instant.CCCallFunc;
 import org.cocos2d.actions.interval.CCFadeOut;
 import org.cocos2d.actions.interval.CCScaleBy;
 import org.cocos2d.actions.interval.CCSequence;
 import org.cocos2d.actions.interval.CCSpawn;
+import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.types.CGPoint;
 
 import static com.bomcodigo.navinha.game.DeviceSettings.screenResolution;
@@ -31,8 +35,10 @@ public class Shoot extends CCSprite {
     }
 
     public void update(float dt){
-        positionY += 2;
-        this.setPosition(screenResolution(CGPoint.ccp(positionX,positionY)));
+        if (Runner.check().isGamePlaying() && ! Runner.check().isGamePaused()) {
+            positionY += 2;
+            this.setPosition(screenResolution(CGPoint.ccp(positionX,positionY)));
+        }
     }
 
     public void explode(){
@@ -42,9 +48,7 @@ public class Shoot extends CCSprite {
         CCScaleBy a1 = CCScaleBy.action(dt,2f);
         CCFadeOut a2 = CCFadeOut.action(dt);
         CCSpawn s1 = CCSpawn.actions(a1,a2);
-
         CCCallFunc c1 = CCCallFunc.action(this,"removeMe");
-
         this.runAction(CCSequence.actions(s1,c1));
     }
 
@@ -58,5 +62,7 @@ public class Shoot extends CCSprite {
 
     public void start(){
         Log.d(TAG,"Shoot Moving!");
+        SoundEngine.sharedEngine().playEffect(
+                CCDirector.sharedDirector().getActivity(), R.raw.shoot);
     }
 }

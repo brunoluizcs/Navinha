@@ -1,13 +1,17 @@
 package com.bomcodigo.navinha.game.object;
 
+import com.bomcodigo.navinha.R;
 import com.bomcodigo.navinha.game.interfaces.MeteorsEngineDelegate;
+import com.bomcodigo.navinha.game.screens.Runner;
 
 import org.cocos2d.actions.instant.CCCallFunc;
 import org.cocos2d.actions.interval.CCFadeOut;
 import org.cocos2d.actions.interval.CCScaleBy;
 import org.cocos2d.actions.interval.CCSequence;
 import org.cocos2d.actions.interval.CCSpawn;
+import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.types.CGPoint;
 
 import java.util.Random;
@@ -22,7 +26,7 @@ public class Meteor extends CCSprite{
 
     public Meteor(String image){
         super(image);
-        x = new Random().nextInt(Math.round(screenWidth()));
+        x = new Random().nextInt(Math.round(screenWidth() -10));
         y = screenHeight();
     }
 
@@ -31,8 +35,10 @@ public class Meteor extends CCSprite{
     }
 
     public void update(float dt){
-        y -= 1;
-        this.setPosition(screenResolution(CGPoint.ccp(x,y)));
+        if (Runner.check().isGamePlaying() && ! Runner.check().isGamePaused()) {
+            y -= 1;
+            this.setPosition(screenResolution(CGPoint.ccp(x,y)));
+        }
     }
 
     public void setDelegate(MeteorsEngineDelegate delegate) {
@@ -40,8 +46,13 @@ public class Meteor extends CCSprite{
     }
 
     public void shooted(){
+        SoundEngine.sharedEngine().playEffect(
+                CCDirector.sharedDirector().getActivity(),R.raw.bang
+        );
+
         this.delegate.removeMeteor(this);
         this.unschedule("update");
+
 
         float dt = 0.2f;
         CCScaleBy a1 = CCScaleBy.action(dt, 0.5f);

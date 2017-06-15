@@ -3,19 +3,25 @@ package com.bomcodigo.navinha.game.scenes;
 
 import android.util.Log;
 
+import com.bomcodigo.navinha.R;
 import com.bomcodigo.navinha.game.Assets;
 import com.bomcodigo.navinha.game.control.GameButtons;
 import com.bomcodigo.navinha.game.engine.MeteorsEngine;
 import com.bomcodigo.navinha.game.interfaces.MeteorsEngineDelegate;
+import com.bomcodigo.navinha.game.interfaces.PauseDelegate;
 import com.bomcodigo.navinha.game.interfaces.ShootEngineDelegate;
 import com.bomcodigo.navinha.game.object.Meteor;
 import com.bomcodigo.navinha.game.object.Player;
+import com.bomcodigo.navinha.game.object.Score;
 import com.bomcodigo.navinha.game.object.Shoot;
+import com.bomcodigo.navinha.game.screens.Runner;
 import com.bomcodigo.navinha.game.screens.ScreenBackground;
 
 import org.cocos2d.layers.CCLayer;
 import org.cocos2d.layers.CCScene;
+import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.types.CGPoint;
 import org.cocos2d.types.CGRect;
 
@@ -29,7 +35,7 @@ import static com.bomcodigo.navinha.game.DeviceSettings.screenResolution;
 import static com.bomcodigo.navinha.game.DeviceSettings.screenWidth;
 
 public class GameScene extends CCLayer
-        implements MeteorsEngineDelegate, ShootEngineDelegate{
+        implements MeteorsEngineDelegate, ShootEngineDelegate, PauseDelegate{
     private final String TAG = GameScene.class.getSimpleName();
 
     private ScreenBackground background;
@@ -41,8 +47,15 @@ public class GameScene extends CCLayer
     private CCLayer shootsLayer;
     private ArrayList shootsArray;
     private List playerArray;
+    private Score score;
+    private CCLayer scoreLayer;
+    private PauseScreen pauseScreen;
+    private CCLayer layerTop;
 
     private GameScene(){
+        preloadCache();
+        SoundEngine.sharedEngine().playSound(CCDirector.sharedDirector().getActivity(),R.raw.music,true);
+
         this.background = new ScreenBackground(Assets.BACKGROUND);
         this.background.setPosition(screenResolution(CGPoint.ccp(screenWidth() / 2.0f, screenHeight() / 2.0f)));
         this.addChild(this.background);
@@ -55,6 +68,8 @@ public class GameScene extends CCLayer
         this.addChild(this.meteorsLayer);
         this.shootsLayer = CCLayer.node();
         this.addChild(this.shootsLayer);
+        this.layerTop = CCLayer.node();
+        this.addChild(this.layerTop);
 
         this.addGameObjects();
     }
@@ -70,11 +85,18 @@ public class GameScene extends CCLayer
         this.meteorsArray = new ArrayList();
         this.meteorsEngine = new MeteorsEngine();
         this.player = new Player();
+        this.player.start();
+        this.player.catchAccelerometer();
         this.playerLayer.addChild(this.player);
         this.shootsArray = new ArrayList();
         this.player.setDelegate(this);
         this.playerArray = new ArrayList();
         this.playerArray.add(this.player);
+        this.score = new Score();
+        this.score.setDelegate(this);
+        this.scoreLayer = CCLayer.node();
+        this.scoreLayer.addChild(this.score);
+        this.addChild(this.scoreLayer);
     }
 
     public CGRect getBoarders(CCSprite object){
@@ -117,10 +139,14 @@ public class GameScene extends CCLayer
     public void meteoroHit(CCSprite meteor, CCSprite shoot){
         ((Meteor) meteor).shooted();
         ((Shoot) shoot).explode();
+        this.score.increase();
+
     }
 
     public void playerHit(CCSprite meteor, CCSprite player){
-
+        ((Meteor) meteor).shooted();
+        ((Player) player).explode();
+        CCDirector.sharedDirector().replaceScene(new GameOverScreen().scene());
     }
 
     public void checkHits(float dt){
@@ -145,12 +171,42 @@ public class GameScene extends CCLayer
 
     public void moveRight(){
         player.moveRight();
+    }
 
+    public void preloadCache(){
+        SoundEngine.sharedEngine().preloadEffect(
+                CCDirector.sharedDirector().getActivity(),
+                R.raw.shoot);
+        SoundEngine.sharedEngine().preloadEffect(
+                CCDirector.sharedDirector().getActivity(),
+                R.raw.bang);
+        SoundEngine.sharedEngine().preloadEffect(
+                CCDirector.sharedDirector().getActivity(),
+                R.raw.over);
+
+    }
+
+    public void startFinalScreen(){
+        CCDirector.sharedDirector().replaceScene(new FinalScreen().scene());
+    }
+
+    private void pauseGame(){
+        if (!Runner.check().isGamePaused() && Runner.check().isGamePlaying()){
+            SoundEngine.sharedEngine().setEffectsVolume(0f);
+            SoundEngine.sharedEngine().setSoundVolume(0f);
+            Runner.setIsGamePaused(true);
+        }
     }
 
     @Override
     public void onEnter() {
         super.onEnter();
+        Runner.check().setIsGamePlaying(true);
+        Runner.check().setIsGamePaused(false);
+
+        SoundEngine.sharedEngine().setEffectsVolume(1f);
+        SoundEngine.sharedEngine().setSoundVolume(1f);
+
         this.schedule("checkHits");
         this.startEngines();
     }
@@ -180,5 +236,37 @@ public class GameScene extends CCLayer
     @Override
     public void removeShoot(Shoot shoot) {
         this.shootsArray.remove(shoot);
+    }
+
+    @Override
+    public void resumeGame() {
+        if (Runner.check().isGamePaused() ||
+                ! Runner.check().isGamePlaying()){
+            SoundEngine.sharedEngine().setEffectsVolume(1f);
+            SoundEngine.sharedEngine().setSoundVolume(1f);
+            this.pauseScreen = null;
+            Runner.check().setIsGamePaused(false);
+            this.setIsTouchEnabled(true);
+        }
+    }
+
+    @Override
+    public void quitGame() {
+        SoundEngine.sharedEngine().setEffectsVolume(0f);
+        SoundEngine.sharedEngine().setSoundVolume(0f);
+        CCDirector.sharedDirector().replaceScene(new TitleScreen().scene());
+    }
+
+    @Override
+    public void pauseGameAndShowLayer() {
+        if (Runner.check().isGamePlaying() && ! Runner.check().isGamePaused()) {
+            this.pauseGame();
+        }
+        if (Runner.check().isGamePaused() && Runner.check().isGamePlaying()
+                && this.pauseScreen == null){
+            this.pauseScreen = new PauseScreen();
+            this.layerTop.addChild(this.pauseScreen);
+            this.pauseScreen.setDelegate(this);
+        }
     }
 }
