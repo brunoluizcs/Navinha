@@ -3,7 +3,7 @@ package com.bomcodigo.navinha.game.object;
 import android.util.Log;
 
 import com.bomcodigo.navinha.R;
-import com.bomcodigo.navinha.game.Assets;
+import com.bomcodigo.navinha.game.enums.ShootType;
 import com.bomcodigo.navinha.game.interfaces.ShootEngineDelegate;
 import com.bomcodigo.navinha.game.screens.Runner;
 
@@ -17,17 +17,20 @@ import org.cocos2d.nodes.CCSprite;
 import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.types.CGPoint;
 
+import static com.bomcodigo.navinha.game.DeviceSettings.screenHeight;
 import static com.bomcodigo.navinha.game.DeviceSettings.screenResolution;
 
 
 public class Shoot extends CCSprite {
     private static final String TAG = Shoot.class.getSimpleName();
 
+    private ShootType type;
     private ShootEngineDelegate delegate;
     float positionX, positionY;
 
-    public Shoot(float positionX, float positionY, String asset){
-        super(asset);
+    public Shoot(float positionX, float positionY, ShootType type){
+        super(type.getAsset());
+        this.type = type;
         this.positionX = positionX;
         this.positionY = positionY;
         setPosition(positionX,positionY);
@@ -36,8 +39,13 @@ public class Shoot extends CCSprite {
 
     public void update(float dt){
         if (Runner.check().isGamePlaying() && ! Runner.check().isGamePaused()) {
-            positionY += 2;
+            this.positionY += 2;
             this.setPosition(screenResolution(CGPoint.ccp(positionX,positionY)));
+            if (this.positionY > screenHeight()){
+                this.delegate.removeShoot(this);
+                this.runAction(CCCallFunc.action(this,"removeMe"));
+                Log.d(TAG,"Clear Shoot");
+            }
         }
     }
 
@@ -64,5 +72,9 @@ public class Shoot extends CCSprite {
         Log.d(TAG,"Shoot Moving!");
         SoundEngine.sharedEngine().playEffect(
                 CCDirector.sharedDirector().getActivity(), R.raw.shoot);
+    }
+
+    public ShootType getType() {
+        return type;
     }
 }

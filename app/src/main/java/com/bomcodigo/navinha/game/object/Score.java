@@ -38,4 +38,12 @@ public class Score extends CCLayer{
             this.delegate.startFinalScreen();
         }
     }
+
+    public void decrease(){
+        if (this.score > 0) {
+            this.score--;
+            Log.d(TAG, "Score: " + this.score);
+            this.text.setString(String.valueOf(this.score));
+        }
+    }
 }

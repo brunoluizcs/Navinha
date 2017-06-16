@@ -1,9 +1,6 @@
 package com.bomcodigo.navinha.game.object;
 
 
-import android.content.IntentFilter;
-import android.util.Log;
-
 import com.bomcodigo.navinha.R;
 import com.bomcodigo.navinha.game.Assets;
 import com.bomcodigo.navinha.game.control.Accelerometer;
@@ -19,8 +16,6 @@ import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCSprite;
 import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.types.CGPoint;
-
-import java.util.Random;
 
 import static com.bomcodigo.navinha.game.DeviceSettings.screenHeight;
 import static com.bomcodigo.navinha.game.DeviceSettings.screenWidth;
@@ -53,9 +48,12 @@ public class Player extends CCSprite
 
     public void shoot(){
         if (Runner.check().isGamePlaying() && ! Runner.check().isGamePaused()) {
-            String[] assets = {Assets.SHOOT,Assets.SHOOTGREEN};
-            int rand = new Random().nextInt(2);
-            delegate.createShoot(new Shoot(positionX,positionY+30,assets[rand]));
+            delegate.createShoot(new ShootRed(positionX,positionY+30));
+        }
+    }
+    public void shootGreen(){
+        if (Runner.check().isGamePlaying() && ! Runner.check().isGamePaused()) {
+            delegate.createShoot(new ShootGreen(positionX,positionY+30));
         }
     }
 
@@ -141,7 +139,6 @@ public class Player extends CCSprite
             this.setPosition(CGPoint.ccp(this.positionX,this.positionY));
         }
     }
-
 
 
     @Override

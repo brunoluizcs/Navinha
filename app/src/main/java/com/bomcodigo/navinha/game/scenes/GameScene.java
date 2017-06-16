@@ -7,6 +7,8 @@ import com.bomcodigo.navinha.R;
 import com.bomcodigo.navinha.game.Assets;
 import com.bomcodigo.navinha.game.control.GameButtons;
 import com.bomcodigo.navinha.game.engine.MeteorsEngine;
+import com.bomcodigo.navinha.game.enums.MeteorType;
+import com.bomcodigo.navinha.game.enums.ShootType;
 import com.bomcodigo.navinha.game.interfaces.MeteorsEngineDelegate;
 import com.bomcodigo.navinha.game.interfaces.PauseDelegate;
 import com.bomcodigo.navinha.game.interfaces.ShootEngineDelegate;
@@ -14,6 +16,8 @@ import com.bomcodigo.navinha.game.object.Meteor;
 import com.bomcodigo.navinha.game.object.Player;
 import com.bomcodigo.navinha.game.object.Score;
 import com.bomcodigo.navinha.game.object.Shoot;
+import com.bomcodigo.navinha.game.object.ShootGreen;
+import com.bomcodigo.navinha.game.screens.ParallaxBackground;
 import com.bomcodigo.navinha.game.screens.Runner;
 import com.bomcodigo.navinha.game.screens.ScreenBackground;
 
@@ -51,14 +55,20 @@ public class GameScene extends CCLayer
     private CCLayer scoreLayer;
     private PauseScreen pauseScreen;
     private CCLayer layerTop;
+    private ParallaxBackground parallaxBackground;
 
     private GameScene(){
         preloadCache();
         SoundEngine.sharedEngine().playSound(CCDirector.sharedDirector().getActivity(),R.raw.music,true);
 
-        this.background = new ScreenBackground(Assets.BACKGROUND);
-        this.background.setPosition(screenResolution(CGPoint.ccp(screenWidth() / 2.0f, screenHeight() / 2.0f)));
-        this.addChild(this.background);
+        //this.background = new ScreenBackground(Assets.BACKGROUND);
+        //this.background.setPosition(screenResolution(CGPoint.ccp(screenWidth() / 2.0f, screenHeight() / 2.0f)));
+        //this.addChild(this.background);
+        parallaxBackground = new ParallaxBackground();
+        this.addChild(parallaxBackground);
+        this.schedule("scrollScreen");
+
+
         this.playerLayer = CCLayer.node();
         this.addChild(playerLayer);
         GameButtons gameButtonsLayer = GameButtons.gameButtons();
@@ -70,7 +80,6 @@ public class GameScene extends CCLayer
         this.addChild(this.shootsLayer);
         this.layerTop = CCLayer.node();
         this.addChild(this.layerTop);
-
         this.addGameObjects();
     }
 
@@ -137,10 +146,14 @@ public class GameScene extends CCLayer
     }
 
     public void meteoroHit(CCSprite meteor, CCSprite shoot){
-        ((Meteor) meteor).shooted();
-        ((Shoot) shoot).explode();
-        this.score.increase();
+        ShootType shootType = ((Shoot) shoot).getType();
+        MeteorType meteorType = ((Meteor) meteor).getType();
 
+        ((Shoot) shoot).explode();
+        if (shootType.getType().equals(meteorType.getType())){
+            ((Meteor) meteor).shooted();
+            this.score.increase();
+        }
     }
 
     public void playerHit(CCSprite meteor, CCSprite player){
@@ -155,6 +168,10 @@ public class GameScene extends CCLayer
         this.checkRadiusHitsOfArray(this.meteorsArray,this.playerArray,this,"playerHit");
     }
 
+    public void scrollScreen(float dt){
+        parallaxBackground.scroll(dt);
+    }
+
     private void startEngines(){
         this.addChild(this.meteorsEngine);
         this.meteorsEngine.setDelegate(this);
@@ -162,6 +179,11 @@ public class GameScene extends CCLayer
 
     public boolean shoot(){
         player.shoot();
+        return true;
+    }
+
+    public boolean shootGreen(){
+        player.shootGreen();
         return true;
     }
 
@@ -198,6 +220,7 @@ public class GameScene extends CCLayer
         }
     }
 
+
     @Override
     public void onEnter() {
         super.onEnter();
@@ -222,6 +245,11 @@ public class GameScene extends CCLayer
     @Override
     public void removeMeteor(Meteor meteor) {
         this.meteorsArray.remove(meteor);
+    }
+
+    @Override
+    public void clearMeteor(Meteor meteor) {
+        this.score.decrease();
     }
 
 

@@ -13,10 +13,15 @@ public class Assets {
     public static String LEFTCONTROL = "left.png";
     public static String RIGHTBUTTON = "right.png";
     public static String SHOOTBUTTON = "shootButton.png";
+    public static String GREENSHOOTBUTTON = "shootGreenButton.png";
     public static String SHOOT = "shoot.png";
     public static String SHOOTGREEN = "shootgreen.png";
     public static String FINALEND = "finalend.png";
     public static String GAMEOVER = "gameover.png";
     public static String EXIT = "exit.png";
     public static String PAUSE = "pause.png";
+    public static String FIREBALL = "fireball.png";
+    public static String FIREGREENBALL = "firegreenball.png";
+    public static String PARALLAX1 = "parallax1.png";
+    public static String EXPLOSION = "explosion.png";
 }
