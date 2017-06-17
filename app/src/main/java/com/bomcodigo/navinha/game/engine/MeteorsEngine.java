@@ -1,7 +1,6 @@
 package com.bomcodigo.navinha.game.engine;
 
 
-import com.bomcodigo.navinha.game.Assets;
 import com.bomcodigo.navinha.game.enums.MeteorType;
 import com.bomcodigo.navinha.game.interfaces.MeteorsEngineDelegate;
 import com.bomcodigo.navinha.game.object.Meteor;
@@ -20,11 +19,11 @@ public class MeteorsEngine extends CCLayer{
 
     public void meteorsEngine(float dt){
         if (Runner.check().isGamePlaying() && ! Runner.check().isGamePaused()) {
-            if (new Random().nextInt(25) == 0){
-                this.getDelegate().createMeteor(new Meteor(MeteorType.Red));
+            if (new Random().nextInt(20) == 0){
+                this.getDelegate().createMeteor(new Meteor(MeteorType.Fire));
             }
-            if (new Random().nextInt(25) == 0){
-                this.getDelegate().createMeteor(new Meteor(MeteorType.Green));
+            if (new Random().nextInt(20) == 0){
+                this.getDelegate().createMeteor(new Meteor(MeteorType.Ice));
             }
         }
     }

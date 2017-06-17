@@ -19,7 +19,7 @@ public class GameButtons extends CCLayer
 
     private Button leftControl;
     private Button rightControl;
-    private Button greenShootButton;
+    private Button iceShootButton;
     private Button shootButton;
     private Button pauseButton;
     private GameScene delegate;
@@ -33,14 +33,14 @@ public class GameButtons extends CCLayer
 
         this.leftControl = new Button(Assets.LEFTCONTROL);
         this.rightControl = new Button(Assets.RIGHTBUTTON);
-        this.greenShootButton = new Button(Assets.GREENSHOOTBUTTON);
+        this.iceShootButton = new Button(Assets.ICESHOOTBUTTON);
         this.shootButton = new Button(Assets.SHOOTBUTTON);
         this.pauseButton = new Button(Assets.PAUSE);
 
         this.leftControl.setDelegate(this);
         this.rightControl.setDelegate(this);
         this.shootButton.setDelegate(this);
-        this.greenShootButton.setDelegate(this);
+        this.iceShootButton.setDelegate(this);
         this.pauseButton.setDelegate(this);
 
         setButtonsPosition();
@@ -48,14 +48,14 @@ public class GameButtons extends CCLayer
         //addChild(leftControl);
         //addChild(rightControl);
         addChild(shootButton);
-        addChild(greenShootButton);
+        addChild(iceShootButton);
         addChild(pauseButton);
     }
 
     private void setButtonsPosition() {
         leftControl.setPosition(screenResolution(CGPoint.ccp(40,40)));
         rightControl.setPosition(screenResolution(CGPoint.ccp(100,40)));
-        greenShootButton.setPosition(CGPoint.ccp(40,40));
+        iceShootButton.setPosition(CGPoint.ccp(40,40));
         shootButton.setPosition(screenResolution(CGPoint.ccp(screenWidth()-40,40)));
         pauseButton.setPosition(screenResolution(CGPoint.ccp(40,screenHeight() - 30)));
     }
@@ -79,8 +79,8 @@ public class GameButtons extends CCLayer
             this.delegate.shoot();
         }
 
-        if (sender.equals(this.greenShootButton)){
-            Log.d(TAG,"Button clicked: Shotting Green !");
+        if (sender.equals(this.iceShootButton)){
+            Log.d(TAG,"Button clicked: Shotting Ice !");
             this.delegate.shootGreen();
         }
 

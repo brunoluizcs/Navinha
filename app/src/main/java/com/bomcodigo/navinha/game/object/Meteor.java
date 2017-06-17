@@ -3,29 +3,22 @@ package com.bomcodigo.navinha.game.object;
 import android.util.Log;
 
 import com.bomcodigo.navinha.R;
-import com.bomcodigo.navinha.game.Assets;
+import com.bomcodigo.navinha.game.animations.ExplosionAnimation;
+import com.bomcodigo.navinha.game.enums.MeteorSpeed;
 import com.bomcodigo.navinha.game.enums.MeteorType;
 import com.bomcodigo.navinha.game.interfaces.MeteorsEngineDelegate;
 import com.bomcodigo.navinha.game.screens.Runner;
 
-import org.cocos2d.actions.base.CCRepeatForever;
 import org.cocos2d.actions.instant.CCCallFunc;
-import org.cocos2d.actions.interval.CCAnimate;
+import org.cocos2d.actions.instant.CCFlipY;
 import org.cocos2d.actions.interval.CCFadeOut;
-import org.cocos2d.actions.interval.CCIntervalAction;
 import org.cocos2d.actions.interval.CCScaleBy;
 import org.cocos2d.actions.interval.CCSequence;
 import org.cocos2d.actions.interval.CCSpawn;
-import org.cocos2d.nodes.CCAnimation;
 import org.cocos2d.nodes.CCDirector;
-import org.cocos2d.nodes.CCNode;
 import org.cocos2d.nodes.CCSprite;
-import org.cocos2d.nodes.CCSpriteFrame;
-import org.cocos2d.nodes.CCSpriteFrameCache;
-import org.cocos2d.nodes.CCSpriteSheet;
 import org.cocos2d.sound.SoundEngine;
 import org.cocos2d.types.CGPoint;
-import org.cocos2d.types.CGRect;
 
 import java.util.Random;
 
@@ -39,13 +32,41 @@ public class Meteor extends CCSprite{
     private float x,y;
     private MeteorsEngineDelegate delegate;
     private MeteorType meteorType;
+    private ExplosionAnimation explosionAnimation;
+    private MeteorSpeed meteorSpeed;
 
     public Meteor(MeteorType meteorType){
         super(meteorType.getAsset());
+
+        randomScaleMeteor();
+        setMeteorSpeed();
         this.meteorType = meteorType;
-        this.animationShooted();
+        this.explosionAnimation = new ExplosionAnimation();
         x = new Random().nextInt(Math.round(screenWidth() -10));
         y = screenHeight();
+
+    }
+
+    private void setMeteorSpeed() {
+        int factor = new Random().nextInt(16);
+        if (factor >= 0 && factor < 2){
+            this.meteorSpeed = MeteorSpeed.Slow;
+        }else if (factor >= 2 && factor < 7){
+            this.meteorSpeed = MeteorSpeed.Normal;
+        }else if (factor >= 7 && factor < 13){
+            this.meteorSpeed = MeteorSpeed.Fast;
+        }else if (factor >= 13 && factor <=14 ){
+            this.meteorSpeed = MeteorSpeed.SuperFast;
+        }else if (factor == 15){
+            this.meteorSpeed = MeteorSpeed.ExtremFast;
+        }else{
+            this.meteorSpeed = MeteorSpeed.Normal;
+        }
+    }
+
+    public void randomScaleMeteor() {
+        float finalX = (2f - 0.5f) * new Random().nextFloat() + 0.5f;
+        this.setScale(finalX);
     }
 
     public void start(){
@@ -54,7 +75,8 @@ public class Meteor extends CCSprite{
 
     public void update(float dt){
         if (Runner.check().isGamePlaying() && ! Runner.check().isGamePaused()) {
-            this.y -= 1;
+            this.y -= this.meteorSpeed.getScale();
+
             this.setPosition(screenResolution(CGPoint.ccp(x,y)));
 
             if (y <= -1){
@@ -66,20 +88,9 @@ public class Meteor extends CCSprite{
         }
     }
 
+
     public void setDelegate(MeteorsEngineDelegate delegate) {
         this.delegate = delegate;
-    }
-
-    public void animationShooted(){
-        CCAnimation animation = CCAnimation.animation("",2 / 20f);
-        CCSpriteSheet spriteSheet = CCSpriteSheet.spriteSheet(Assets.EXPLOSION);
-        CCSpriteFrame sprite = CCSpriteFrame.frame(spriteSheet.getTexture(),CGRect.make(0,0,60,60),CGPoint.ccp(280,280));
-        Log.d(TAG,"Sprite Sheet: " + spriteSheet.getChildren().size());
-
-        animation.addFrame(sprite);
-        animation.addFrame(Assets.FIREBALL);
-        CCIntervalAction scrPprAction = CCAnimate.action(1f, animation, false);
-        this.runAction(scrPprAction);
     }
 
     public void shooted(){
@@ -96,7 +107,7 @@ public class Meteor extends CCSprite{
         CCFadeOut a2 = CCFadeOut.action(dt);
         CCSpawn s1 = CCSpawn.actions(a1,a2);
         CCCallFunc c1 = CCCallFunc.action(this,"removeMe");
-        this.runAction(CCSequence.actions(s1,c1));
+        this.runAction(CCSequence.actions(this.explosionAnimation.getAction(),s1,c1));
     }
 
     public void removeMe(){

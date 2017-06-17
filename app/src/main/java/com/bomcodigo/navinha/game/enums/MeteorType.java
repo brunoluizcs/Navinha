@@ -3,7 +3,7 @@ package com.bomcodigo.navinha.game.enums;
 import com.bomcodigo.navinha.game.Assets;
 
 public enum MeteorType {
-    Green(Assets.FIREGREENBALL,Type.Green), Red(Assets.FIREBALL,Type.Red);
+    Ice(Assets.ICEBALL,Type.Ice), Fire(Assets.FIREBALL,Type.Fire);
     private String asset;
     private Type type;
 

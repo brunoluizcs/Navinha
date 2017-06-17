@@ -4,7 +4,6 @@ package com.bomcodigo.navinha.game.scenes;
 import android.util.Log;
 
 import com.bomcodigo.navinha.R;
-import com.bomcodigo.navinha.game.Assets;
 import com.bomcodigo.navinha.game.control.GameButtons;
 import com.bomcodigo.navinha.game.engine.MeteorsEngine;
 import com.bomcodigo.navinha.game.enums.MeteorType;
@@ -16,7 +15,6 @@ import com.bomcodigo.navinha.game.object.Meteor;
 import com.bomcodigo.navinha.game.object.Player;
 import com.bomcodigo.navinha.game.object.Score;
 import com.bomcodigo.navinha.game.object.Shoot;
-import com.bomcodigo.navinha.game.object.ShootGreen;
 import com.bomcodigo.navinha.game.screens.ParallaxBackground;
 import com.bomcodigo.navinha.game.screens.Runner;
 import com.bomcodigo.navinha.game.screens.ScreenBackground;
@@ -33,10 +31,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.bomcodigo.navinha.game.DeviceSettings.screenHeight;
-import static com.bomcodigo.navinha.game.DeviceSettings.screenResolution;
-import static com.bomcodigo.navinha.game.DeviceSettings.screenWidth;
 
 public class GameScene extends CCLayer
         implements MeteorsEngineDelegate, ShootEngineDelegate, PauseDelegate{
@@ -183,7 +177,7 @@ public class GameScene extends CCLayer
     }
 
     public boolean shootGreen(){
-        player.shootGreen();
+        player.shootIce();
         return true;
     }
 

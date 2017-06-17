@@ -4,7 +4,7 @@ package com.bomcodigo.navinha.game.enums;
 import com.bomcodigo.navinha.game.Assets;
 
 public enum ShootType {
-    Green(Assets.SHOOTGREEN, Type.Green), Red(Assets.SHOOT, Type.Red);
+    Ice(Assets.ICESHOOT, Type.Ice), Fire(Assets.SHOOT, Type.Fire);
     private String asset;
     private Type type;
 

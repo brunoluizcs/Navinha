@@ -48,12 +48,12 @@ public class Player extends CCSprite
 
     public void shoot(){
         if (Runner.check().isGamePlaying() && ! Runner.check().isGamePaused()) {
-            delegate.createShoot(new ShootRed(positionX,positionY+30));
+            delegate.createShoot(new ShootFire(positionX,positionY+30));
         }
     }
-    public void shootGreen(){
+    public void shootIce(){
         if (Runner.check().isGamePlaying() && ! Runner.check().isGamePaused()) {
-            delegate.createShoot(new ShootGreen(positionX,positionY+30));
+            delegate.createShoot(new ShootIce(positionX,positionY+30));
         }
     }
 
