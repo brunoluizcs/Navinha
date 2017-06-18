@@ -27,17 +27,17 @@ public class GameOverScreen extends CCLayer implements ButtonDelegate {
     }
 
     public GameOverScreen() {
-        this.background = new ScreenBackground(Assets.BACKGROUND);
+        this.background = new ScreenBackground(Assets.BACKGROUND1);
         this.background.setPosition(screenResolution(CGPoint.ccp(screenWidth()/2.0f,screenHeight() / 2.0f)));
         this.addChild(this.background);
 
         CCSprite title = CCSprite.sprite(Assets.GAMEOVER);
         title.setPosition(CGPoint.ccp(screenWidth()/2,screenHeight()-130));
-        this.addChild(title);
+        //this.addChild(title);
 
         this.setIsTouchEnabled(true);
         this.beginButton = new Button(Assets.PLAY);
-        this.beginButton.setPosition(screenResolution(CGPoint.ccp(screenWidth()/2,screenHeight()-300)));
+        this.beginButton.setPosition(screenResolution(CGPoint.ccp(screenWidth()/2,screenHeight()-250)));
         this.beginButton.setDelegate(this);
         addChild(this.beginButton);
     }

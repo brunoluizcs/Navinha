@@ -19,7 +19,7 @@ public class TitleScreen extends CCLayer {
     private ScreenBackground background;
 
     public TitleScreen() {
-        this.background = new ScreenBackground(Assets.BACKGROUND);
+        this.background = new ScreenBackground(Assets.BACKGROUND1);
         this.background.setPosition(
                 screenResolution(CGPoint.ccp(
                         screenWidth() / 2.0f,
@@ -28,7 +28,7 @@ public class TitleScreen extends CCLayer {
 
         CCSprite title = CCSprite.sprite(Assets.LOGO);
         title.setPosition(screenResolution(CGPoint.ccp(screenWidth()/2,screenHeight() - 130)));
-        this.addChild(title);
+        //this.addChild(title);
 
         MenuButtons menuButtons = new MenuButtons();
         this.addChild(menuButtons);

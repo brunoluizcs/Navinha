@@ -3,6 +3,8 @@ package com.bomcodigo.navinha.game;
 
 public class Assets {
     public static String BACKGROUND = "background.png";
+    public static String BACKGROUND1 = "background1.png";
+    public static String BACKGROUND2 = "background2.png";
     public static String LOGO = "logo.png";
     public static String PLAY = "play.png";
     public static String HIGHSCORE = "highscore.png";
@@ -24,4 +26,5 @@ public class Assets {
     public static String ICEBALL = "iceball.png";
     public static String PARALLAX1 = "parallax1.png";
     public static String EXPLOSION = "explosion.png";
+
 }

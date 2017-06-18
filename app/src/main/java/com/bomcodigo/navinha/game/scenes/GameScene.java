@@ -95,7 +95,8 @@ public class GameScene extends CCLayer
         this.player.setDelegate(this);
         this.playerArray = new ArrayList();
         this.playerArray.add(this.player);
-        this.score = new Score();
+        this.score = Score.sharedScore();
+        this.score.clear();
         this.score.setDelegate(this);
         this.scoreLayer = CCLayer.node();
         this.scoreLayer.addChild(this.score);

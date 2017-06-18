@@ -12,6 +12,7 @@ import static com.bomcodigo.navinha.game.DeviceSettings.screenHeight;
 import static com.bomcodigo.navinha.game.DeviceSettings.screenWidth;
 
 public class Score extends CCLayer{
+    private static Score instance = null;
     private final String TAG = Score.class.getSimpleName();
     private int score;
     private CCBitmapFontAtlas text;
@@ -21,19 +22,35 @@ public class Score extends CCLayer{
         this.delegate = delegate;
     }
 
-    public Score(){
+    private Score(){
         this.score = 0;
         this.text = CCBitmapFontAtlas.bitmapFontAtlas(String.valueOf(this.score),"UniSansSemiBold_Numbers_240.fnt");
-        this.text.setScale((float) 100/100);
+        this.text.setScale(0.7f);
         this.setPosition(screenWidth()-50,screenHeight() - 50);
         this.addChild(this.text);
+    }
+
+    public static Score sharedScore(){
+        if (instance == null){
+            instance = new Score();
+        }
+        return instance;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void clear(){
+        this.score = 0;
+        this.text.setString(String.valueOf(this.score));
     }
 
     public void increase(){
         score++;
         Log.d(TAG,"Score: " + score);
         this.text.setString(String.valueOf(this.score));
-        if (score==100){
+        if (score==300){
             Log.d(TAG,"Player Win !");
             this.delegate.startFinalScreen();
         }
