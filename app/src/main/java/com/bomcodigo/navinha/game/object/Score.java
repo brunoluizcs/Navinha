@@ -50,10 +50,6 @@ public class Score extends CCLayer{
         score++;
         Log.d(TAG,"Score: " + score);
         this.text.setString(String.valueOf(this.score));
-        if (score==300){
-            Log.d(TAG,"Player Win !");
-            this.delegate.startFinalScreen();
-        }
     }
 
     public void decrease(){

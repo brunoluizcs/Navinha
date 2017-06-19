@@ -4,13 +4,16 @@ import com.bomcodigo.navinha.R;
 import com.bomcodigo.navinha.game.Assets;
 import com.bomcodigo.navinha.game.control.Button;
 import com.bomcodigo.navinha.game.interfaces.ButtonDelegate;
+import com.bomcodigo.navinha.game.object.Score;
 import com.bomcodigo.navinha.game.screens.ScreenBackground;
 
 import org.cocos2d.layers.CCLayer;
 import org.cocos2d.layers.CCScene;
 import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.opengl.CCBitmapFontAtlas;
 import org.cocos2d.sound.SoundEngine;
+import org.cocos2d.transitions.CCFadeTransition;
 import org.cocos2d.types.CGPoint;
 
 import static com.bomcodigo.navinha.game.DeviceSettings.screenHeight;
@@ -22,6 +25,7 @@ public class FinalScreen extends CCLayer
         implements ButtonDelegate{
     private ScreenBackground background;
     private Button beginButton;
+    private CCBitmapFontAtlas text;
 
     public CCScene scene(){
         CCScene scene = CCScene.node();
@@ -34,15 +38,23 @@ public class FinalScreen extends CCLayer
         this.background.setPosition(screenResolution(CGPoint.ccp(screenWidth() / 2.0f, screenHeight() / 2.0f)));
         this.addChild(this.background);
 
-        SoundEngine.sharedEngine().playSound(
-                CCDirector.sharedDirector().getActivity(),
-                R.raw.finalend,true);
+        SoundEngine.sharedEngine().playEffect(
+                CCDirector.sharedDirector().getActivity(), R.raw.finalend);
+        SoundEngine.sharedEngine().pauseSound();
+        //SoundEngine.sharedEngine().playSound(CCDirector.sharedDirector().getActivity(),R.raw.finalend,true);
 
-
+        /*
         CCSprite title = CCSprite.sprite(Assets.FINALEND);
         title.setPosition(screenResolution(CGPoint.ccp(screenWidth() / 2f,
                                 screenHeight() - 130 )));
-        //this.addChild(title);
+        this.addChild(title);
+        */
+
+        this.text = CCBitmapFontAtlas.bitmapFontAtlas(String.valueOf(Score.sharedScore().getScore()),"UniSansSemiBold_Numbers_240.fnt");
+        this.text.setScale(1.0f);
+        this.text.setPosition(screenResolution(CGPoint.ccp(screenWidth() / 2f,screenHeight() - 130 )));
+        this.addChild(this.text);
+
 
         this.setIsTouchEnabled(true);
         this.beginButton = new Button(Assets.PLAY);
@@ -50,7 +62,7 @@ public class FinalScreen extends CCLayer
                 screenResolution(CGPoint.ccp(screenWidth() / 2,
                         screenHeight() -250)));
         this.beginButton.setDelegate(this);
-        addChild(this.beginButton);
+        this.addChild(this.beginButton);
     }
 
 
@@ -58,7 +70,8 @@ public class FinalScreen extends CCLayer
     public void buttonClicked(Button sender) {
         if (sender.equals(this.beginButton)){
             SoundEngine.sharedEngine().pauseSound();
-            CCDirector.sharedDirector().replaceScene(new TitleScreen().scene());
+            CCDirector.sharedDirector().replaceScene(CCFadeTransition.transition(1.0f,GameScene.createGame()));
+
         }
     }
 }

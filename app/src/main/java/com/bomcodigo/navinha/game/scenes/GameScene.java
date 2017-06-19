@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.bomcodigo.navinha.R;
 import com.bomcodigo.navinha.game.control.GameButtons;
+import com.bomcodigo.navinha.game.engine.ColisionEngine;
 import com.bomcodigo.navinha.game.engine.MeteorsEngine;
 import com.bomcodigo.navinha.game.enums.MeteorType;
 import com.bomcodigo.navinha.game.enums.ShootType;
@@ -50,15 +51,17 @@ public class GameScene extends CCLayer
     private PauseScreen pauseScreen;
     private CCLayer layerTop;
     private ParallaxBackground parallaxBackground;
+    private ColisionEngine colisionEngine;
 
     private GameScene(){
         preloadCache();
         SoundEngine.sharedEngine().playSound(CCDirector.sharedDirector().getActivity(),R.raw.music,true);
+        this.colisionEngine = new ColisionEngine();
 
         //this.background = new ScreenBackground(Assets.BACKGROUND);
         //this.background.setPosition(screenResolution(CGPoint.ccp(screenWidth() / 2.0f, screenHeight() / 2.0f)));
         //this.addChild(this.background);
-        parallaxBackground = new ParallaxBackground();
+        this.parallaxBackground = new ParallaxBackground();
         this.addChild(parallaxBackground);
         this.schedule("scrollScreen");
 
@@ -117,9 +120,15 @@ public class GameScene extends CCLayer
         boolean result = false;
         for (int i = 0; i < array1.size(); i++) {
             CGRect rect1 = getBoarders(array1.get(i));
+            CGRect aux1 = CGRect.make(rect1.origin.x,rect1.origin.y,rect1.size.width,rect1.size.height);
             for (int j = 0; j < array2.size(); j++) {
                 CGRect rect2 = getBoarders(array2.get(j));
-                if (CGRect.intersects(rect1, rect2)) {
+                CGRect aux2 = CGRect.make(rect2.origin.x,rect2.origin.y,rect2.size.width,rect2.size.height);
+                if  ("playerHit".equals(hit)){
+                    aux1 = colisionEngine.reduceRadiosArea(aux1,40);
+                    aux2 = colisionEngine.reduceRadiosArea(aux2,40);
+                }
+                if (CGRect.intersects(aux1, aux2)) {
                     Log.d(TAG, "Colision Detected: " + hit);
                     result = true;
                     Method method;
@@ -154,7 +163,7 @@ public class GameScene extends CCLayer
     public void playerHit(CCSprite meteor, CCSprite player){
         ((Meteor) meteor).shooted();
         ((Player) player).explode();
-        CCDirector.sharedDirector().replaceScene(new GameOverScreen().scene());
+        this.startFinalScreen();
     }
 
     public void checkHits(float dt){
@@ -200,6 +209,10 @@ public class GameScene extends CCLayer
         SoundEngine.sharedEngine().preloadEffect(
                 CCDirector.sharedDirector().getActivity(),
                 R.raw.over);
+        SoundEngine.sharedEngine().preloadEffect(
+                CCDirector.sharedDirector().getActivity(),
+                R.raw.finalend);
+
 
     }
 
@@ -223,7 +236,7 @@ public class GameScene extends CCLayer
         Runner.check().setIsGamePaused(false);
 
         SoundEngine.sharedEngine().setEffectsVolume(1f);
-        SoundEngine.sharedEngine().setSoundVolume(1f);
+        SoundEngine.sharedEngine().setSoundVolume(0.3f);
 
         this.schedule("checkHits");
         this.startEngines();
@@ -266,7 +279,7 @@ public class GameScene extends CCLayer
         if (Runner.check().isGamePaused() ||
                 ! Runner.check().isGamePlaying()){
             SoundEngine.sharedEngine().setEffectsVolume(1f);
-            SoundEngine.sharedEngine().setSoundVolume(1f);
+            SoundEngine.sharedEngine().setSoundVolume(0.3f);
             this.pauseScreen = null;
             Runner.check().setIsGamePaused(false);
             this.setIsTouchEnabled(true);
