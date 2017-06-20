@@ -53,8 +53,10 @@ public class FinalScreen extends CCLayer
                                 screenHeight() - 130 )));
         this.addChild(title);
         */
-        String leaderboard_id = NavinhaApplication.getContext().getString(R.string.leaderboard_id);
-        Games.Leaderboards.submitScore(GameService.sharedGameService().getGoogleApiClient(),leaderboard_id,Score.sharedScore().getScore());
+        if (GameService.sharedGameService().isConnected()) {
+            String leaderboard_id = NavinhaApplication.getContext().getString(R.string.leaderboard_id);
+            Games.Leaderboards.submitScore(GameService.sharedGameService().getGoogleApiClient(), leaderboard_id, Score.sharedScore().getScore());
+        }
 
         this.text = CCBitmapFontAtlas.bitmapFontAtlas(String.valueOf(Score.sharedScore().getScore()),"UniSansSemiBold_Numbers_240.fnt");
         this.text.setScale(1.0f);

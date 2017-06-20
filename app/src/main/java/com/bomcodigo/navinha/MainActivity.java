@@ -17,7 +17,6 @@ import com.bomcodigo.navinha.game.scenes.TitleScreen;
 import com.bomcodigo.navinha.game.services.GameService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.games.Games;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
 import org.cocos2d.layers.CCScene;
@@ -53,13 +52,6 @@ public class MainActivity extends AppCompatActivity implements
 
         GameService.sharedGameService().init(this,this);
         mGoogleApiClient = GameService.sharedGameService().getGoogleApiClient();
-
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()){
-            Log.d(TAG,"Player Connected");
-        }else{
-            Log.d(TAG,"Need Connection");
-        }
-
         CCScene scene = new TitleScreen().scene();
         CCDirector.sharedDirector().runWithScene(scene);
     }
@@ -67,16 +59,14 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        this.mGoogleApiClient.connect();
+        GameService.sharedGameService().connect();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        this.mGoogleApiClient.disconnect();
+        GameService.sharedGameService().disconnect();
     }
-
-
 
     public void configSensorManager(){
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -91,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConnectionSuspended(int i) {
         Log.d(TAG,"Attempt Reconnect");
-        mGoogleApiClient.connect();
+        GameService.sharedGameService().connect();
     }
 
     @Override
@@ -119,21 +109,11 @@ public class MainActivity extends AppCompatActivity implements
             mSignInClicked = false;
             mResolvingConnectionFailure = false;
             if (resultCode == RESULT_OK){
-                mGoogleApiClient.connect();
+                GameService.sharedGameService().connect();
             }else{
                 BaseGameUtils.showActivityResultError(this,
                         requestCode, resultCode, R.string.sign_in_failed);
             }
         }
-    }
-
-    private void signInClicked(){
-        mSignInClicked = true;
-        mGoogleApiClient.connect();
-    }
-
-    private void signOutClicked(){
-        mSignInClicked = false;
-        Games.signOut(mGoogleApiClient);
     }
 }
