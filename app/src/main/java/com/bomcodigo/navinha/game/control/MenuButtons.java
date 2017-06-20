@@ -1,10 +1,15 @@
 package com.bomcodigo.navinha.game.control;
 
+import android.app.Application;
 import android.util.Log;
 
+import com.bomcodigo.navinha.NavinhaApplication;
+import com.bomcodigo.navinha.R;
 import com.bomcodigo.navinha.game.Assets;
 import com.bomcodigo.navinha.game.interfaces.ButtonDelegate;
 import com.bomcodigo.navinha.game.scenes.GameScene;
+import com.bomcodigo.navinha.game.services.GameService;
+import com.google.android.gms.games.Games;
 
 import org.cocos2d.layers.CCLayer;
 import org.cocos2d.nodes.CCDirector;
@@ -62,6 +67,10 @@ public class MenuButtons extends CCLayer
         }
         if (sender.equals(this.highscoreButton)){
             Log.d(TAG,"Button clicked: Highscore");
+            String leaderboard_id = NavinhaApplication.getContext().getString(R.string.leaderboard_id);
+            CCDirector.sharedDirector().getActivity().startActivityForResult(
+                    Games.Leaderboards.getLeaderboardIntent(GameService.sharedGameService().getGoogleApiClient(),
+                    leaderboard_id), 9002);
         }
         if (sender.equals(this.helpButton)){
             Log.d(TAG,"Button clicked: Help");

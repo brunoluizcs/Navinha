@@ -1,11 +1,14 @@
 package com.bomcodigo.navinha.game.scenes;
 
+import com.bomcodigo.navinha.NavinhaApplication;
 import com.bomcodigo.navinha.R;
 import com.bomcodigo.navinha.game.Assets;
 import com.bomcodigo.navinha.game.control.Button;
 import com.bomcodigo.navinha.game.interfaces.ButtonDelegate;
 import com.bomcodigo.navinha.game.object.Score;
 import com.bomcodigo.navinha.game.screens.ScreenBackground;
+import com.bomcodigo.navinha.game.services.GameService;
+import com.google.android.gms.games.Games;
 
 import org.cocos2d.layers.CCLayer;
 import org.cocos2d.layers.CCScene;
@@ -25,6 +28,7 @@ public class FinalScreen extends CCLayer
         implements ButtonDelegate{
     private ScreenBackground background;
     private Button beginButton;
+    private Button titleButton;
     private CCBitmapFontAtlas text;
 
     public CCScene scene(){
@@ -49,6 +53,8 @@ public class FinalScreen extends CCLayer
                                 screenHeight() - 130 )));
         this.addChild(title);
         */
+        String leaderboard_id = NavinhaApplication.getContext().getString(R.string.leaderboard_id);
+        Games.Leaderboards.submitScore(GameService.sharedGameService().getGoogleApiClient(),leaderboard_id,Score.sharedScore().getScore());
 
         this.text = CCBitmapFontAtlas.bitmapFontAtlas(String.valueOf(Score.sharedScore().getScore()),"UniSansSemiBold_Numbers_240.fnt");
         this.text.setScale(1.0f);
@@ -63,6 +69,11 @@ public class FinalScreen extends CCLayer
                         screenHeight() -250)));
         this.beginButton.setDelegate(this);
         this.addChild(this.beginButton);
+
+        this.titleButton = new Button(Assets.EXIT);
+        this.titleButton.setPosition(CGPoint.ccp(screenWidth() / 2, screenHeight() -300));
+        this.titleButton.setDelegate(this);
+        this.addChild(this.titleButton);
     }
 
 
@@ -71,7 +82,11 @@ public class FinalScreen extends CCLayer
         if (sender.equals(this.beginButton)){
             SoundEngine.sharedEngine().pauseSound();
             CCDirector.sharedDirector().replaceScene(CCFadeTransition.transition(1.0f,GameScene.createGame()));
+        }
 
+        if (sender.equals(this.titleButton)){
+            SoundEngine.sharedEngine().pauseSound();
+            CCDirector.sharedDirector().replaceScene(CCFadeTransition.transition(1.0f,new TitleScreen().scene()));
         }
     }
 }

@@ -14,6 +14,7 @@ import android.view.WindowManager;
 
 import com.bomcodigo.navinha.game.DeviceSettings;
 import com.bomcodigo.navinha.game.scenes.TitleScreen;
+import com.bomcodigo.navinha.game.services.GameService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
@@ -28,11 +29,11 @@ public class MainActivity extends AppCompatActivity implements
     private final String TAG = MainActivity.class.getSimpleName();
 
     private GoogleApiClient mGoogleApiClient;
+
     private static int RC_SIGN_IN = 9001;
     private boolean mResolvingConnectionFailure = false;
     private boolean mAutoStartSignInflow = true;
     private boolean mSignInClicked = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +51,8 @@ public class MainActivity extends AppCompatActivity implements
 
         configSensorManager();
 
-        //TODO: Conectar a API
-        this.mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Games.API).addScope(Games.SCOPE_GAMES)
-                .build();
-
+        GameService.sharedGameService().init(this,this);
+        mGoogleApiClient = GameService.sharedGameService().getGoogleApiClient();
 
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()){
             Log.d(TAG,"Player Connected");
@@ -71,15 +67,13 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        //TODO: Remover esta linha
-        mGoogleApiClient.connect();
+        this.mGoogleApiClient.connect();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        //TODO: Remover esta linha
-        mGoogleApiClient.disconnect();
+        this.mGoogleApiClient.disconnect();
     }
 
 
@@ -117,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements
                 mResolvingConnectionFailure = false;
             }
         }
-        //TODO: Exibir botão de login
     }
 
     @Override
