@@ -5,10 +5,13 @@ import android.util.Log;
 
 import com.bomcodigo.navinha.R;
 import com.bomcodigo.navinha.game.control.GameButtons;
+import com.bomcodigo.navinha.game.engine.AchievementEngine;
 import com.bomcodigo.navinha.game.engine.ColisionEngine;
 import com.bomcodigo.navinha.game.engine.MeteorsEngine;
 import com.bomcodigo.navinha.game.enums.MeteorType;
 import com.bomcodigo.navinha.game.enums.ShootType;
+import com.bomcodigo.navinha.game.enums.Type;
+import com.bomcodigo.navinha.game.interfaces.AchievementEngineDelegate;
 import com.bomcodigo.navinha.game.interfaces.MeteorsEngineDelegate;
 import com.bomcodigo.navinha.game.interfaces.PauseDelegate;
 import com.bomcodigo.navinha.game.interfaces.ShootEngineDelegate;
@@ -36,6 +39,7 @@ import java.util.List;
 public class GameScene extends CCLayer
         implements MeteorsEngineDelegate, ShootEngineDelegate, PauseDelegate{
     private final String TAG = GameScene.class.getSimpleName();
+    private AchievementEngineDelegate achievementEngineDelegate;
 
     private ScreenBackground background;
     private MeteorsEngine meteorsEngine;
@@ -52,11 +56,16 @@ public class GameScene extends CCLayer
     private CCLayer layerTop;
     private ParallaxBackground parallaxBackground;
     private ColisionEngine colisionEngine;
+    private int comboIceMeteor;
+    private int comboFireMeteor;
+
 
     private GameScene(){
         preloadCache();
         SoundEngine.sharedEngine().playSound(CCDirector.sharedDirector().getActivity(),R.raw.music,true);
         this.colisionEngine = new ColisionEngine();
+        this.achievementEngineDelegate = (AchievementEngineDelegate) CCDirector.sharedDirector().getActivity();
+        AchievementEngine.sharedAchievementEngine().setDelegate(this.achievementEngineDelegate);
 
         //this.background = new ScreenBackground(Assets.BACKGROUND);
         //this.background.setPosition(screenResolution(CGPoint.ccp(screenWidth() / 2.0f, screenHeight() / 2.0f)));
@@ -78,6 +87,8 @@ public class GameScene extends CCLayer
         this.layerTop = CCLayer.node();
         this.addChild(this.layerTop);
         this.addGameObjects();
+
+        AchievementEngine.sharedAchievementEngine().unlock_triumphant_entry();
     }
 
     public static CCScene createGame(){
@@ -157,12 +168,48 @@ public class GameScene extends CCLayer
         if (shootType.getType().equals(meteorType.getType())){
             ((Meteor) meteor).shooted();
             this.score.increase();
+            AchievementEngine.sharedAchievementEngine().unlock_lets_play_a_game();
+            checkMeteorHitAchievement(meteorType);
+        }
+    }
+
+    private void checkMeteorHitAchievement(MeteorType meteorType) {
+        if (meteorType.getType() == Type.Ice){
+            comboIceMeteor++;
+            switch (comboFireMeteor){
+                case 10: AchievementEngine.sharedAchievementEngine().unlock_aprendice_ice_meteor_slayer();break;
+                case 50: AchievementEngine.sharedAchievementEngine().unlock_intermediate_ice_meteor_slayer();break;
+                case 100: AchievementEngine.sharedAchievementEngine().unlock_professional_ice_meteor_slayer();break;
+                case 200: AchievementEngine.sharedAchievementEngine().unlock_expert_ice_meteor_slayer();break;
+            }
+        }else{
+            comboFireMeteor++;
+            switch (comboFireMeteor){
+                case 10: AchievementEngine.sharedAchievementEngine().unlock_aprendice_fire_meteor_slayer();break;
+                case 50: AchievementEngine.sharedAchievementEngine().unlock_intermediate_fire_meteor_slayer();break;
+                case 100: AchievementEngine.sharedAchievementEngine().unlock_professional_fire_meteor_slayer();break;
+                case 200: AchievementEngine.sharedAchievementEngine().unlock_expert_fire_meteor_slayer();break;
+            }
         }
     }
 
     public void playerHit(CCSprite meteor, CCSprite player){
         ((Meteor) meteor).shooted();
         ((Player) player).explode();
+
+        if (Score.sharedScore().getScore() > 10){
+            AchievementEngine.sharedAchievementEngine().unlock_you_cant_break_me();
+        }
+        if (Score.sharedScore().getScore() > 50){
+            AchievementEngine.sharedAchievementEngine().unlock_its_a_trap();
+        }
+        if (Score.sharedScore().getScore() > 100){
+            AchievementEngine.sharedAchievementEngine().unlock_hello_leaderboard();
+        }
+        if (Score.sharedScore().getScore() > 180){
+            AchievementEngine.sharedAchievementEngine().unlock_highway_to_hell();
+        }
+
         this.startFinalScreen();
     }
 
@@ -305,4 +352,5 @@ public class GameScene extends CCLayer
             this.pauseScreen.setDelegate(this);
         }
     }
+
 }

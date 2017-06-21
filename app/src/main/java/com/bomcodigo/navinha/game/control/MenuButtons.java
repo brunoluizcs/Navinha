@@ -24,7 +24,8 @@ public class MenuButtons extends CCLayer
 
     private Button playButton;
     private Button highscoreButton;
-    private Button helpButton;
+    private Button achievementsButton;
+    //private Button helpButton;
     private Button soundButton;
 
     public MenuButtons(){
@@ -35,8 +36,12 @@ public class MenuButtons extends CCLayer
         this.highscoreButton = new Button(Assets.HIGHSCORE);
         this.highscoreButton.setDelegate(this);
 
-        this.helpButton = new Button(Assets.HELP);
-        this.helpButton.setDelegate(this);
+        this.achievementsButton = new Button(Assets.ACHIEVEMENTS);
+        this.achievementsButton.setDelegate(this);
+
+        //TODO: Remover o help button
+        //this.helpButton = new Button(Assets.HELP);
+        //this.helpButton.setDelegate(this);
 
         this.soundButton = new Button(Assets.SOUND);
         this.soundButton.setDelegate(this);
@@ -45,15 +50,15 @@ public class MenuButtons extends CCLayer
 
         addChild(playButton);
         addChild(highscoreButton);
-        addChild(helpButton);
+        addChild(achievementsButton);
         addChild(soundButton);
     }
 
     public void setButtonsPosition(){
-        playButton.setPosition(screenResolution(CGPoint.ccp(screenWidth()/2 , screenHeight() - 250)));
+        playButton.setPosition(screenResolution(CGPoint.ccp(screenWidth()/2 , screenHeight() - 200)));
+        achievementsButton.setPosition(screenResolution(CGPoint.ccp(screenWidth()/2 , screenHeight() - 250)));
         highscoreButton.setPosition(screenResolution(CGPoint.ccp(screenWidth()/2 , screenHeight() - 300)));
-        helpButton.setPosition(screenResolution(CGPoint.ccp(screenWidth()/2 , screenHeight() - 350)));
-        soundButton.setPosition(screenResolution(CGPoint.ccp(screenWidth()/2 -100 , screenHeight() - 420)));
+        soundButton.setPosition(screenResolution(CGPoint.ccp(screenWidth()/2 -100 , screenHeight() - 390)));
     }
 
     @Override
@@ -69,9 +74,8 @@ public class MenuButtons extends CCLayer
         }
         if (sender.equals(this.highscoreButton)){
             Log.d(TAG,"Button clicked: Highscore");
-            if (! GameService.sharedGameService().isConnected()){
-                GameService.sharedGameService().connect();
-            }
+            GameService.sharedGameService().connect();
+
             if (GameService.sharedGameService().isConnected()) {
                 GameService.sharedGameService()
                         .showLeaderBoard(CCDirector.sharedDirector().getActivity());
@@ -83,8 +87,19 @@ public class MenuButtons extends CCLayer
                 //Toast.makeText(NavinhaApplication.getContext(),error,Toast.LENGTH_LONG).show();
             }
         }
-        if (sender.equals(this.helpButton)){
-            Log.d(TAG,"Button clicked: Help");
+        if (sender.equals(this.achievementsButton)){
+            Log.d(TAG,"Button clicked: Achievements");
+            GameService.sharedGameService().connect();
+
+            if (GameService.sharedGameService().isConnected()) {
+                GameService.sharedGameService().showAchievements(CCDirector.sharedDirector().getActivity());
+            }else{
+                String error = NavinhaApplication.getContext()
+                        .getString(R.string.google_play_game_connection_error);
+                //TODO: Criar uma activity para exibir a mensagem de erro
+                //Toast.makeText(NavinhaApplication.getContext(),error,Toast.LENGTH_LONG).show();
+            }
+
         }
         if (sender.equals(this.soundButton)){
             Log.d(TAG,"Button Clicked: Sound");

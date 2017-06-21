@@ -54,7 +54,7 @@ public class FinalScreen extends CCLayer
         this.addChild(title);
         */
         if (GameService.sharedGameService().isConnected()) {
-            String leaderboard_id = NavinhaApplication.getContext().getString(R.string.leaderboard_id);
+            String leaderboard_id = NavinhaApplication.getContext().getString(R.string.leaderboard_top_meteor_killers);
             Games.Leaderboards.submitScore(GameService.sharedGameService().getGoogleApiClient(), leaderboard_id, Score.sharedScore().getScore());
         }
 

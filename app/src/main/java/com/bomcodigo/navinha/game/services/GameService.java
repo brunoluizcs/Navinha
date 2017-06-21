@@ -19,7 +19,7 @@ public class GameService {
 
     private GoogleApiClient googleApiClient;
 
-    public void init(GoogleApiClient.ConnectionCallbacks connectionCallbacks,
+    public void init(Activity activity, GoogleApiClient.ConnectionCallbacks connectionCallbacks,
                       GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener){
 
         GoogleSignInOptions options = new GoogleSignInOptions
@@ -27,7 +27,7 @@ public class GameService {
                 .requestServerAuthCode(NavinhaApplication.getContext().getString(R.string.webclientid))
                 .build();
 
-        this.googleApiClient = new GoogleApiClient.Builder(NavinhaApplication.getContext())
+        this.googleApiClient = new GoogleApiClient.Builder(activity)
                 .addApi(Games.API)
                 //.addScope(Games.SCOPE_GAMES)
                 .addApi(Auth.GOOGLE_SIGN_IN_API,options)
@@ -72,10 +72,22 @@ public class GameService {
 
     public void showLeaderBoard(Activity activity) {
         if (hasConnectGameApi()) {
-            String leaderboard_id = NavinhaApplication.getContext().getString(R.string.leaderboard_id);
-            activity.startActivityForResult(
-                    Games.Leaderboards.getLeaderboardIntent( GameService.sharedGameService()
-                            .getGoogleApiClient(),leaderboard_id), 9002);
+            String leaderboard_id = NavinhaApplication.getContext().getString(R.string.leaderboard_top_meteor_killers);
+            activity.startActivityForResult(Games.Leaderboards.getLeaderboardIntent(
+                    this.getGoogleApiClient(),leaderboard_id), 9002);
+        }
+    }
+
+    public void showAchievements(Activity activity) {
+        if (hasConnectGameApi()) {
+            activity.startActivityForResult(Games.Achievements.getAchievementsIntent(
+                    this.getGoogleApiClient()), 9003);
+        }
+    }
+
+    public void unlockAchievement(String achievement_id){
+        if (isConnected() && hasConnectGameApi()) {
+            Games.Achievements.unlock(this.getGoogleApiClient(), achievement_id);
         }
     }
 }

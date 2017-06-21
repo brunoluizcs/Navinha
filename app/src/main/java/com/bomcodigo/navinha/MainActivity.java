@@ -13,6 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.bomcodigo.navinha.game.DeviceSettings;
+import com.bomcodigo.navinha.game.interfaces.AchievementEngineDelegate;
 import com.bomcodigo.navinha.game.scenes.TitleScreen;
 import com.bomcodigo.navinha.game.services.GameService;
 import com.google.android.gms.common.ConnectionResult;
@@ -24,7 +25,7 @@ import org.cocos2d.nodes.CCDirector;
 import org.cocos2d.opengl.CCGLSurfaceView;
 
 public class MainActivity extends AppCompatActivity implements
-        GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener,AchievementEngineDelegate{
     private final String TAG = MainActivity.class.getSimpleName();
 
     private GoogleApiClient mGoogleApiClient;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements
 
         configSensorManager();
 
-        GameService.sharedGameService().init(this,this);
+        GameService.sharedGameService().init(this,this,this);
         mGoogleApiClient = GameService.sharedGameService().getGoogleApiClient();
         CCScene scene = new TitleScreen().scene();
         CCDirector.sharedDirector().runWithScene(scene);
@@ -115,5 +116,11 @@ public class MainActivity extends AppCompatActivity implements
                         requestCode, resultCode, R.string.sign_in_failed);
             }
         }
+    }
+
+    @Override
+    public void unlock(String achievement_id) {
+        Log.d(TAG,"Achievement unlock: " + achievement_id);
+        GameService.sharedGameService().unlockAchievement(achievement_id);
     }
 }

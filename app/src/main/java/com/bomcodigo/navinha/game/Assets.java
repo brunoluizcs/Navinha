@@ -26,5 +26,6 @@ public class Assets {
     public static String ICEBALL = "iceball.png";
     public static String PARALLAX1 = "parallax1.png";
     public static String EXPLOSION = "explosion.png";
+    public static String ACHIEVEMENTS = "achievements.png";
 
 }
