@@ -1,8 +1,6 @@
 package com.bomcodigo.navinha.game.control;
 
-import android.app.Application;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.bomcodigo.navinha.NavinhaApplication;
 import com.bomcodigo.navinha.R;
@@ -10,8 +8,6 @@ import com.bomcodigo.navinha.game.Assets;
 import com.bomcodigo.navinha.game.interfaces.ButtonDelegate;
 import com.bomcodigo.navinha.game.scenes.GameScene;
 import com.bomcodigo.navinha.game.services.GameService;
-import com.google.android.gms.games.Games;
-import com.google.example.games.basegameutils.BaseGameUtils;
 
 import org.cocos2d.layers.CCLayer;
 import org.cocos2d.nodes.CCDirector;
@@ -82,7 +78,9 @@ public class MenuButtons extends CCLayer
             }else{
                 String error = NavinhaApplication.getContext()
                         .getString(R.string.google_play_game_connection_error);
-                Toast.makeText(NavinhaApplication.getContext(),error,Toast.LENGTH_LONG).show();
+
+                //TODO: Criar uma activity para exibir a mensagem de erro
+                //Toast.makeText(NavinhaApplication.getContext(),error,Toast.LENGTH_LONG).show();
             }
         }
         if (sender.equals(this.helpButton)){

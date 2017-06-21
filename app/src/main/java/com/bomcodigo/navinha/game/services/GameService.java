@@ -51,13 +51,13 @@ public class GameService {
     }
 
     public void connect(){
-        if (this.googleApiClient != null) {
+        if (this.googleApiClient != null && ! this.googleApiClient.isConnected() && ! this.googleApiClient.isConnecting()) {
             this.googleApiClient.connect(SIGN_IN_MODE_OPTIONAL);
         }
     }
 
     public void disconnect(){
-        if (this.googleApiClient != null){
+        if (this.googleApiClient != null && this.googleApiClient.isConnected()){
             this.googleApiClient.disconnect();
         }
     }
