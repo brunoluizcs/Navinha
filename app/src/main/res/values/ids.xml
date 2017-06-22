@@ -1,21 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_id">660648382626</string>
-    <string name="webclientid">660648382626-gtqe3udgicjj2cgdgdcgqd3f1muru77o.apps.googleusercontent.com</string>
-    <string name="package_name">com.bomcodigo.navinha</string>
-    <string name="achievement_triumphant_entry">CgkIoqHZjZ0TEAIQBA</string>
-    <string name="achievement_lets_play_a_game">CgkIoqHZjZ0TEAIQBQ</string>
-    <string name="achievement_aprendice_ice_meteor_slayer">CgkIoqHZjZ0TEAIQBg</string>
-    <string name="achievement_aprendice_fire_meteor_slayer">CgkIoqHZjZ0TEAIQBw</string>
-    <string name="achievement_you_cantt_break_me">CgkIoqHZjZ0TEAIQCA</string>
-    <string name="achievement_intermediate_ice_meteor_slayer">CgkIoqHZjZ0TEAIQCQ</string>
-    <string name="achievement_intermediate_fire_meteor_slayer">CgkIoqHZjZ0TEAIQCg</string>
-    <string name="achievement_its_a_trap">CgkIoqHZjZ0TEAIQCw</string>
-    <string name="achievement_professional_ice_meteor_slayer">CgkIoqHZjZ0TEAIQDA</string>
-    <string name="achievement_professional_fire_meteor_slayer">CgkIoqHZjZ0TEAIQDQ</string>
-    <string name="achievement_expert_ice_meteor_slayer">CgkIoqHZjZ0TEAIQDg</string>
-    <string name="achievement_expert_fire_meteor_slayer">CgkIoqHZjZ0TEAIQDw</string>
-    <string name="achievement_hello_leaderboard">CgkIoqHZjZ0TEAIQEA</string>
-    <string name="achievement_highway_to_hell">CgkIoqHZjZ0TEAIQEQ</string>
-    <string name="leaderboard_top_meteor_killers">CgkIoqHZjZ0TEAIQAA</string>
+ 
 </resources>
