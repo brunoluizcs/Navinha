@@ -15,8 +15,10 @@ public class Score extends CCLayer{
     private static Score instance = null;
     private final String TAG = Score.class.getSimpleName();
     private int score;
+    private int combo;
     private CCBitmapFontAtlas text;
     private GameScene delegate;
+
 
     public void setDelegate(GameScene delegate) {
         this.delegate = delegate;
@@ -24,6 +26,7 @@ public class Score extends CCLayer{
 
     private Score(){
         this.score = 0;
+        this.combo = 0;
         this.text = CCBitmapFontAtlas.bitmapFontAtlas(String.valueOf(this.score),"UniSansSemiBold_Numbers_240.fnt");
         this.text.setScale(0.7f);
         this.setPosition(screenWidth()-50,screenHeight() - 50);
@@ -43,20 +46,27 @@ public class Score extends CCLayer{
 
     public void clear(){
         this.score = 0;
+        this.combo = 0;
         this.text.setString(String.valueOf(this.score));
     }
 
     public void increase(){
-        score++;
+        this.score++;
+        this.combo++;
         Log.d(TAG,"Score: " + score);
         this.text.setString(String.valueOf(this.score));
     }
 
     public void decrease(){
+        this.combo = 0;
         if (this.score > 0) {
             this.score--;
             Log.d(TAG, "Score: " + this.score);
             this.text.setString(String.valueOf(this.score));
         }
+    }
+
+    public int getCombo() {
+        return combo;
     }
 }

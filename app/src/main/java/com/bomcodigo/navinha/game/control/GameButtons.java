@@ -16,9 +16,6 @@ import static com.bomcodigo.navinha.game.DeviceSettings.screenWidth;
 public class GameButtons extends CCLayer
         implements ButtonDelegate{
     private final String TAG = GameButtons.class.getSimpleName();
-
-    private Button leftControl;
-    private Button rightControl;
     private Button iceShootButton;
     private Button shootButton;
     private Button pauseButton;
@@ -30,31 +27,22 @@ public class GameButtons extends CCLayer
 
     public GameButtons(){
         this.setIsTouchEnabled(true);
-
-        this.leftControl = new Button(Assets.LEFTCONTROL);
-        this.rightControl = new Button(Assets.RIGHTBUTTON);
         this.iceShootButton = new Button(Assets.ICESHOOTBUTTON);
         this.shootButton = new Button(Assets.SHOOTBUTTON);
         this.pauseButton = new Button(Assets.PAUSE);
 
-        this.leftControl.setDelegate(this);
-        this.rightControl.setDelegate(this);
+
         this.shootButton.setDelegate(this);
         this.iceShootButton.setDelegate(this);
         this.pauseButton.setDelegate(this);
 
         setButtonsPosition();
-
-        //addChild(leftControl);
-        //addChild(rightControl);
         addChild(shootButton);
         addChild(iceShootButton);
         addChild(pauseButton);
     }
 
     private void setButtonsPosition() {
-        leftControl.setPosition(screenResolution(CGPoint.ccp(40,40)));
-        rightControl.setPosition(screenResolution(CGPoint.ccp(100,40)));
         iceShootButton.setPosition(CGPoint.ccp(40,40));
         shootButton.setPosition(screenResolution(CGPoint.ccp(screenWidth()-40,40)));
         pauseButton.setPosition(screenResolution(CGPoint.ccp(40,screenHeight() - 30)));
@@ -66,14 +54,6 @@ public class GameButtons extends CCLayer
 
     @Override
     public void buttonClicked(Button sender) {
-        if (sender.equals(this.leftControl)){
-            Log.d(TAG,"Button clicked: left");
-            this.delegate.moveLeft();
-        }
-        if (sender.equals(this.rightControl)){
-            Log.d(TAG,"Button clicked: right");
-            this.delegate.moveRight();
-        }
         if (sender.equals(this.shootButton)){
             Log.d(TAG,"Button clicked: Shotting!");
             this.delegate.shoot();

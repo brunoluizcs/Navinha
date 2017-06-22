@@ -32,6 +32,8 @@ public class Player extends CCSprite
     private Accelerometer accelerometer;
     private float currentAccelX;
     private float currentAccelY;
+    private Shield shield;
+    private boolean shieldEnable = false;
 
     public Player(){
         super(Assets.NAVE);
@@ -140,6 +142,25 @@ public class Player extends CCSprite
         }
     }
 
+
+    public void enableShield(){
+        if (! shieldEnable) {
+            shield = new Shield();
+            shield.setPosition(30,30);
+            this.addChild(shield);
+            this.shieldEnable=true;
+        }
+    }
+
+    public void disableShield(){
+        this.shield.stopAnimation();
+        this.removeChild(this.shield,true);
+        this.shieldEnable = false;
+    }
+
+    public boolean isShieldEnable() {
+        return shieldEnable;
+    }
 
     @Override
     public void accelerometerDidAccelerate(float x, float y) {

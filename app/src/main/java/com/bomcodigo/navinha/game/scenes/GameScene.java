@@ -67,6 +67,10 @@ public class GameScene extends CCLayer
         this.achievementEngineDelegate = (AchievementEngineDelegate) CCDirector.sharedDirector().getActivity();
         AchievementEngine.sharedAchievementEngine().setDelegate(this.achievementEngineDelegate);
 
+        this.comboIceMeteor = 0;
+        this.comboFireMeteor = 0;
+
+        //TODO: Remover este background
         //this.background = new ScreenBackground(Assets.BACKGROUND);
         //this.background.setPosition(screenResolution(CGPoint.ccp(screenWidth() / 2.0f, screenHeight() / 2.0f)));
         //this.addChild(this.background);
@@ -168,15 +172,19 @@ public class GameScene extends CCLayer
         if (shootType.getType().equals(meteorType.getType())){
             ((Meteor) meteor).shooted();
             this.score.increase();
+            if (this.score.getCombo() > 15){
+                player.enableShield();
+            }
             AchievementEngine.sharedAchievementEngine().unlock_lets_play_a_game();
             checkMeteorHitAchievement(meteorType);
+
         }
     }
 
     private void checkMeteorHitAchievement(MeteorType meteorType) {
         if (meteorType.getType() == Type.Ice){
             comboIceMeteor++;
-            switch (comboFireMeteor){
+            switch (comboIceMeteor){
                 case 10: AchievementEngine.sharedAchievementEngine().unlock_aprendice_ice_meteor_slayer();break;
                 case 50: AchievementEngine.sharedAchievementEngine().unlock_intermediate_ice_meteor_slayer();break;
                 case 100: AchievementEngine.sharedAchievementEngine().unlock_professional_ice_meteor_slayer();break;
@@ -194,9 +202,18 @@ public class GameScene extends CCLayer
     }
 
     public void playerHit(CCSprite meteor, CCSprite player){
-        ((Meteor) meteor).shooted();
-        ((Player) player).explode();
+        if (! this.player.isShieldEnable()) {
+            checkScoreAchievement();
+            ((Meteor) meteor).shooted();
+            ((Player) player).explode();
+            this.startFinalScreen();
+        }else{
+            ((Meteor) meteor).shooted();
+            this.player.disableShield();
+        }
+    }
 
+    private void checkScoreAchievement() {
         if (Score.sharedScore().getScore() > 10){
             AchievementEngine.sharedAchievementEngine().unlock_you_cant_break_me();
         }
@@ -209,8 +226,6 @@ public class GameScene extends CCLayer
         if (Score.sharedScore().getScore() > 180){
             AchievementEngine.sharedAchievementEngine().unlock_highway_to_hell();
         }
-
-        this.startFinalScreen();
     }
 
     public void checkHits(float dt){
@@ -274,7 +289,6 @@ public class GameScene extends CCLayer
             Runner.setIsGamePaused(true);
         }
     }
-
 
     @Override
     public void onEnter() {
